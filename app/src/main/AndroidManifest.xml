@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.christian.radioapp">
 
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,6 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".SplashActivity"  android:theme="@style/splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

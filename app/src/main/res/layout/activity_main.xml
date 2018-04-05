@@ -7,13 +7,78 @@
     android:keepScreenOn="true"
     tools:context="com.example.christian.radioapp.MainActivity"
     >
-
+    <ImageView
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/logoasia"
+        android:id="@+id/logoView"
+        />
 
     <Button
         android:id="@+id/b_play"
-        android:layout_width="wrap_content"
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/loadingbg"
+        android:text="" />
+
+    <ImageView
+        android:id="@+id/imgMin"
+        android:layout_width="20sp"
+        android:layout_height="20sp"
+        android:layout_alignTop="@+id/seekbar"
+        android:src="@drawable/removevolume"
+        android:layout_toLeftOf="@+id/seekbar" />
+
+    <ImageView
+        android:id="@+id/imgMax"
+        android:layout_width="20sp"
+        android:layout_height="20sp"
+        android:layout_alignTop="@+id/imgMin"
+        android:src="@drawable/addvolume"
+        android:layout_toRightOf="@+id/seekbar" />
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="283dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="PLAY" />
+        android:layout_marginBottom="48dp"
+        android:progress="50"
+        android:progressTint="#fa9b6b"
+        android:thumbTint="#ff4d00" />
+
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="100px"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="#fff"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/fbbtn"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="99dp"
+        android:background="@drawable/ripplefacebook"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="113dp" />
+
+    <Button
+        android:id="@+id/twitterbtn"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignTop="@+id/fbbtn"
+        android:background="@drawable/rippletwitter"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="113dp" />
+
+
+
+
+
 </RelativeLayout>
