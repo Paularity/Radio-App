@@ -6,24 +6,22 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     tools:context=".SplashActivity">
-    
+
     <ImageView
         android:id="@+id/imageview"
-        android:layout_width="200sp"
+        android:layout_width="300sp"
         android:layout_height="200sp"
-        android:src="@drawable/splash"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100sp"
-         />
+        android:layout_marginTop="146dp"
+        android:src="@drawable/splash" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:layout_width="100px"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageview"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="HELLO ASIA"
-        android:textColor="@android:color/black"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="35dp"
+        android:indeterminateTint="#000000" />
 
 </RelativeLayout>

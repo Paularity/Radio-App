@@ -18,6 +18,8 @@ public class SplashActivity extends AppCompatActivity {
         Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade);
         imageView.startAnimation(animation);
 
+
+
         Thread timer = new Thread(){
             @Override
             public void run() {
@@ -30,6 +32,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 finish();
                 super.run();
             }

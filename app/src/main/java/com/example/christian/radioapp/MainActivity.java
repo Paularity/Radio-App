@@ -1,5 +1,6 @@
 package com.example.christian.radioapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -8,9 +9,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -21,19 +25,22 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button b_play,btnfb,btntwitter;
+    private Button b_play,btnfb,btntwitter,btnRefresh;
 
     boolean prepared = false;
     boolean started = false;
 
-    String stream = "http://shaincast.caster.fm:13297/listen.mp3?authn2d9e4cbfaf0b01a3a4ca95e752e9ff43";
+    String stream = "http://shaincast.caster.fm:13297/listen.mp3?authn54b5a306fb278ce0e2c2609e58e43118";
 
     MediaPlayer mediaPlayer;
     private SeekBar volumeSeekbar = null;
     private AudioManager audioManager = null;
     private ProgressBar pbLoading= null;
+    private SwipeRefreshLayout swipelayout = null;
+    private Animation bounce = null;
     TextView elapseTime;
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,15 +48,29 @@ public class MainActivity extends AppCompatActivity {
         initControls();
     try {
         b_play = (Button) findViewById(R.id.b_play);
+        btnRefresh = (Button) findViewById(R.id.refresh);
         btnfb = (Button) findViewById(R.id.fbbtn);
         btntwitter = (Button) findViewById(R.id.twitterbtn);
         pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
+        swipelayout = (SwipeRefreshLayout) findViewById(R.id.swipelayout);
+        swipelayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipelayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipelayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
         b_play.setEnabled(false);
         pbLoading.setVisibility(View.VISIBLE);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.seekTo(mediaPlayer.getCurrentPosition());
         mediaPlayer.setLooping(true);
-        mediaPlayer.setVolume(0.5f, 0.5f);
+        mediaPlayer.setVolume(100, 100);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         new PlayerTask().execute(stream);
 
@@ -60,12 +81,29 @@ public class MainActivity extends AppCompatActivity {
                     started = false;
                     mediaPlayer.pause();
                     b_play.setBackgroundResource(R.drawable.rippleplay);
+                    //Animate
+                    bounce = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.smallbounce);
+                    b_play.startAnimation(bounce);
+                    // Use bounce interpolator with amplitude 0.2 and frequency 20
+                    MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 10);
+                    bounce.setInterpolator(interpolator);
+                    b_play.startAnimation(bounce);
+
                     pbLoading.setVisibility(View.INVISIBLE);
                     b_play.setText("");
                 } else {
                     started = true;
                     mediaPlayer.start();
                     b_play.setBackgroundResource(R.drawable.ripplepause);
+
+                    //Animate
+                    bounce = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.smallbounce);
+                    b_play.startAnimation(bounce);
+                    // Use bounce interpolator with amplitude 0.2 and frequency 20
+                    MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 10);
+                    bounce.setInterpolator(interpolator);
+                    b_play.startAnimation(bounce);
+
                     pbLoading.setVisibility(View.INVISIBLE);
                     b_play.setText("");
 
@@ -86,6 +124,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/HelloAsiaRadio"));
                 startActivity(intent);
+            }
+        });
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
 
@@ -121,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aBoolean);
             b_play.setEnabled(true);
             b_play.setBackgroundResource(R.drawable.rippleplay);
+            //Animate
+            bounce = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.bounce);
+            b_play.startAnimation(bounce);
+            // Use bounce interpolator with amplitude 0.2 and frequency 20
+            MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
+            bounce.setInterpolator(interpolator);
+            b_play.startAnimation(bounce);
             pbLoading.setVisibility(View.INVISIBLE);
             b_play.setText("");
 
