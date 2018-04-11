@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     boolean prepared = false;
     boolean started = false;
 
-    String stream = "http://shaincast.caster.fm:13297/listen.mp3?authn54b5a306fb278ce0e2c2609e58e43118";
+    String stream = "http://us2.amfmph.com:8222/live.mp3";
 
     MediaPlayer mediaPlayer;
     private SeekBar volumeSeekbar = null;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         btntwitter = (Button) findViewById(R.id.twitterbtn);
         pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
         swipelayout = (SwipeRefreshLayout) findViewById(R.id.swipelayout);
+
         swipelayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -61,15 +62,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipelayout.setRefreshing(false);
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     }
-                },3000);
+                },2000);
             }
         });
         b_play.setEnabled(false);
         pbLoading.setVisibility(View.VISIBLE);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.seekTo(mediaPlayer.getCurrentPosition());
-        mediaPlayer.setLooping(true);
+        mediaPlayer.setLooping(false);
         mediaPlayer.setVolume(100, 100);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         new PlayerTask().execute(stream);
