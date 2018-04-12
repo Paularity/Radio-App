@@ -9,90 +9,153 @@
     android:background="@drawable/background"
     tools:context="com.example.christian.radioapp.MainActivity"
     >
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/logoView"
-        android:layout_width="280sp"
-        android:layout_height="100sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="83dp"
-        android:src="@drawable/logoasia" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
-    <Button
-        android:id="@+id/b_play"
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/loadingbg"
-        android:text="" />
-
-    <ImageView
-        android:id="@+id/imgMin"
-        android:layout_width="50sp"
-        android:layout_height="20sp"
-        android:layout_alignTop="@+id/seekbar"
-        android:src="@drawable/removevolume"
-        android:layout_alignParentLeft="true" />
-
-    <ImageView
-        android:id="@+id/imgMax"
-        android:layout_width="20sp"
-        android:layout_height="20sp"
-        android:layout_alignTop="@+id/imgMin"
-        android:src="@drawable/addvolume"
-        android:layout_toRightOf="@+id/seekbar" />
-
-    <SeekBar
-        android:id="@+id/seekbar"
-        android:layout_width="283dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="48dp"
-        android:progress="50"
-        android:progressTint="#fa9b6b"
-        android:thumbTint="#ff4d00"
-        android:progressBackgroundTint="#ffffff"
-        />
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        >
 
-    <ProgressBar
-        android:id="@+id/pbLoading"
-        android:layout_width="100px"
+        <ImageView
+            android:id="@+id/logoView"
+            android:layout_width="280sp"
+            android:layout_height="100sp"
+            android:layout_gravity="center"
+
+            android:src="@drawable/logoasia" />
+        
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:src="@drawable/comingsoon" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminateTint="#fff"
-        android:visibility="invisible" />
+        android:orientation="vertical"
+        android:layout_marginTop="25dp"
+        >
 
-    <Button
-        android:id="@+id/fbbtn"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="104dp"
-        android:layout_toStartOf="@+id/b_play"
-        android:background="@drawable/ripplefacebook" />
+        <RelativeLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/twitterbtn"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_alignTop="@+id/fbbtn"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rippletwitter" />
+            <Button
+            android:layout_margin="15dp"
+            android:id="@+id/b_play"
+            android:layout_width="100sp"
+            android:layout_height="100dp"
+            android:background="@drawable/loadingbg"
+            android:text=""
+            android:layout_gravity="center"
+            />
 
-    <Button
-        android:id="@+id/refresh"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_alignTop="@+id/fbbtn"
-        android:background="@drawable/rippleloading"
-        android:text=""
-        android:layout_toRightOf="@+id/b_play" />
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                android:layout_width="100px"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:indeterminateTint="#fff"
+                android:visibility="invisible" />
 
+        </RelativeLayout>
+    </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+
+                <ImageView
+                    android:layout_marginLeft="60dp"
+                    android:id="@+id/imgMin"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/removevolume" />
+
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:progress="50"
+                    android:progressTint="#fa9b6b"
+                    android:thumbTint="#ff4d00"
+                    android:progressBackgroundTint="#ffffff"
+                    />
+                <ImageView
+                    android:layout_marginRight="60dp"
+                    android:id="@+id/imgMax"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/addvolume" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="15dp"
+                >
+
+                <Button
+                    android:id="@+id/fbbtn"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:background="@drawable/ripplefacebook" />
+
+                <Button
+                    android:id="@+id/twitterbtn"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:background="@drawable/rippletwitter"
+                    android:layout_toRightOf="@+id/imgMin" />
+
+                <Button
+                    android:id="@+id/refresh"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:background="@drawable/rippleloading"
+                    android:text="" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>
