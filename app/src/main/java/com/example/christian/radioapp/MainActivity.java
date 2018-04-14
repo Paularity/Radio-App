@@ -1,38 +1,57 @@
 package com.example.christian.radioapp;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button b_play,btnfb,btntwitter,btnRefresh;
+    private ImageView imageView;
+    private ViewFlipper viewFlipper;
+    private String imagesArr[];
 
     boolean prepared = false;
     boolean started = false;
 
     String stream = "http://us2.amfmph.com:8222/live.mp3";
 
-    MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private SeekBar volumeSeekbar = null;
     private AudioManager audioManager = null;
     private ProgressBar pbLoading= null;
@@ -40,19 +59,37 @@ public class MainActivity extends AppCompatActivity {
     private Animation bounce = null;
     TextView elapseTime;
 
+    private static final int uniqueID = 5139;
+
+
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initControls();
+
     try {
-        b_play = (Button) findViewById(R.id.b_play);
-        btnRefresh = (Button) findViewById(R.id.refresh);
-        btnfb = (Button) findViewById(R.id.fbbtn);
-        btntwitter = (Button) findViewById(R.id.twitterbtn);
-        pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
-        swipelayout = (SwipeRefreshLayout) findViewById(R.id.swipelayout);
+        initControls();
+        b_play = findViewById(R.id.b_play);
+        btnRefresh = findViewById(R.id.refresh);
+        btnfb = findViewById(R.id.fbbtn);
+        btntwitter = findViewById(R.id.twitterbtn);
+        pbLoading = findViewById(R.id.pbLoading);
+        viewFlipper = findViewById(R.id.viewFlipper);
+        swipelayout = findViewById(R.id.swipelayout);
+        imagesArr = new String[]{"https://goo.gl/6YXsmX", "https://goo.gl/aDPxFo", "https://goo.gl/bk8jNB"};
+
+        if(isNetworkAvailable())
+        {
+            for (int i = 0; i < imagesArr.length; i++) {
+                flipperImages(imagesArr[i]);
+            }
+
+
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext());
+        notification.setAutoCancel(true);
+
+
 
         swipelayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (started) {
                     started = false;
-                    mediaPlayer.pause();
+                  stopService(new Intent(getApplicationContext(),MyServices.class));
+
                     b_play.setBackgroundResource(R.drawable.rippleplay);
                     //Animate
                     bounce = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.smallbounce);
@@ -97,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     b_play.setText("");
                 } else {
                     started = true;
-                    mediaPlayer.start();
+                    startService(new Intent(getApplicationContext(),MyServices.class));
                     b_play.setBackgroundResource(R.drawable.ripplepause);
 
                     //Animate
@@ -131,14 +169,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-            }
-        });
+            btnRefresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    stopService(new Intent(getApplicationContext(),MyServices.class));
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+
+
+                }
+            });
+
+        }
+
+        else
+        {
+            viewFlipper.setBackgroundResource(R.drawable.dino);
+            b_play.setBackgroundResource(R.drawable.nonetwork);
+            Toast.makeText(this,"No internet connection",Toast.LENGTH_SHORT).show();
+
+            btnRefresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+
+
+                }
+            });
+        }
 
     }
     catch (Exception ex)
@@ -146,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
         ex.printStackTrace();
     }
     }
+
+
 
 
 
@@ -185,14 +250,73 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        started = true;
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext());
+                notification.setSmallIcon(R.drawable.smallicon);
+                notification.setTicker("Hello Asia is now ON AIR!");
+                notification.setWhen(System.currentTimeMillis());
+                notification.setContentTitle("Hello Asia!");
+                notification.setContentText("[Now Playing]");
+                notification.setSmallIcon(R.drawable.smallicon);
+                notification.setOngoing(false);
+                notification.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.mipmap.ic_launcher));
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(uniqueID,notification.build());
+
+
+                intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
+                startActivity(intent);
+                finish();
+               System.exit(0);
+        super.onBackPressed();
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(started)
+        if(isNetworkAvailable() == true) {
+        if(!started)
         {
-            mediaPlayer.pause();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext());
+                notification.setSmallIcon(R.drawable.smallicon);
+                notification.setTicker("Hello Asia is now ON AIR!");
+                notification.setWhen(System.currentTimeMillis());
+                notification.setContentTitle("Hello Asia!");
+                notification.setContentText("[Now Playing]");
+                notification.setSmallIcon(R.drawable.smallicon);
+                notification.setOngoing(false);
+                notification.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.mipmap.ic_launcher));
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(uniqueID, notification.build());
+            super.onPause();
+
+            }
+            else
+            {
+                super.onPause();
+            }
+
+
         }
+
+
     }
 
     @Override
@@ -200,6 +324,23 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (started)
         {
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext());
+            notification.setSmallIcon(R.drawable.smallicon);
+            notification.setTicker("Hello Asia is now ON AIR!");
+            notification.setWhen(System.currentTimeMillis());
+            notification.setContentTitle("Hello Asia!");
+            notification.setContentText("[Now Playing]");
+            notification.setSmallIcon(R.drawable.smallicon);
+            notification.setOngoing(false);
+            notification.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                    R.mipmap.ic_launcher));
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            notification.setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(uniqueID,notification.build());
             mediaPlayer.start();
         }
 
@@ -252,4 +393,28 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public void flipperImages(String imgUrl)
+    {
+        imageView = new ImageView(this);
+        Picasso.get().load(imgUrl).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
+        viewFlipper.addView(imageView);
+        viewFlipper.setFlipInterval(6000);
+        viewFlipper.setAutoStart(true);
+        viewFlipper.setInAnimation(this, R.anim.slide_right);
+        viewFlipper.setOutAnimation(this, R.anim.slide_left);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+
+
+
+
 }
